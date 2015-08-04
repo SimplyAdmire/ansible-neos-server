@@ -1,0 +1,16 @@
+---
+
+- include: install-php-packages.yml
+
+- include: install-pear-modules.yml
+- include: load-pear-modules.yml path=/etc/php5/fpm/conf.d
+  notify:
+    - restart php-fpm
+- include: load-pear-modules.yml path=/etc/php5/cli/conf.d
+
+- include: set-configuration.yml path=/etc/php5/fpm/conf.d context=fpm
+  notify:
+    - restart php-fpm
+- include: set-configuration.yml path=/etc/php5/cli/conf.d context=cli
+
+- include: configure-fpm.yml

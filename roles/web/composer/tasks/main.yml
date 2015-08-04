@@ -1,0 +1,23 @@
+---
+
+- stat: path=/usr/bin/composer
+  register: composer_path
+  tags:
+    - composer
+
+- shell: "curl -sS https://getcomposer.org/installer | php"
+  when: (not composer_path.stat.exists)
+  tags:
+    - composer
+
+- command: mv composer.phar /usr/bin/composer
+  when: composer_path.stat.exists == False
+  sudo: yes
+  tags:
+    - composer
+
+- command: /usr/bin/composer self-update
+  sudo: yes
+  when: composer_path.stat.exists == True
+  tags:
+    - composer

@@ -1,0 +1,36 @@
+---
+
+ansible_ssh_user: rens
+# Do not use setting below... But as it's for dev only it's acceptable
+ansible_sudo_pass: password
+
+apt:
+  packages:
+    - curl
+    - tree
+    - mc
+    - build-essential
+    - software-properties-common
+    - libsqlite3-dev
+    - ruby1.9.1-dev
+
+mysql_root_user: root
+mysql_root_password: password
+
+sites:
+  - name: 'Neos'
+    identifier: 'neos'
+
+    databases:
+      - name: neos
+        user: neos
+        password: password
+        type: mysql
+    vhost:
+      template: 'site.conf'
+      context: 'Development'
+
+      listen:
+        - 80
+      aliases:
+        - neos.dev

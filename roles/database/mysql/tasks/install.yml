@@ -1,0 +1,50 @@
+---
+
+- apt: name=python-mysqldb state=present
+  sudo: yes
+  tags:
+    - mysql
+
+- apt: name=mysql-server state=present
+  sudo: yes
+  tags:
+    - mysql
+
+- name: Set options in my.cnf
+  ini_file: dest=/etc/mysql/my.cnf state=present section='{{ item.section }}' option='{{ item.option }}' value='{{ item.value }}'
+  sudo: yes
+  with_items:
+    - {section: 'client', option: 'default-character-set', value: 'utf8'}
+
+    - {section: 'mysql', option: 'default-character-set', value: 'utf8'}
+
+    - {section: 'mysqld', option: 'character-set-server', value: 'utf8'}
+    - {section: 'mysqld', option: 'init-connect', value: '"SET NAMES utf8"'}
+    - {section: 'mysqld', option: 'collation-server', value: 'utf8_unicode_ci'}
+  notify:
+    - restart mysql
+  tags:
+    - mysql
+
+- name: Test root password
+  shell: mysql -u{{ mysql_root_user }} -p{{ mysql_root_password }} -e ''
+  register: rootConnectionWorks
+  ignore_errors: true
+  changed_when: rootConnectionWorks.rc != 0
+  tags:
+    - mysql
+
+- name: Set root password
+  shell: mysqladmin -u {{ mysql_root_user }} password {{ mysql_root_password }}
+  when: rootConnectionWorks.rc != 0
+  tags:
+    - mysql
+
+- name: Create .my.cnf files
+  template: src=.my.cnf dest=~/.my.cnf owner='{{ item }}'
+  sudo: yes
+  sudo_user: '{{ item }}'
+  with_items:
+    - root
+  tags:
+    - mysql

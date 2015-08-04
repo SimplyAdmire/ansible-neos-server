@@ -1,0 +1,9 @@
+---
+
+- name: start elasticsearch
+  sudo: yes
+  service: name=elasticsearch state=started
+
+- name: restart elasticsearch
+  sudo: yes
+  service: name=elasticsearch state=restarted

@@ -1,0 +1,8 @@
+---
+
+- apt: name=git state=present
+  sudo: yes
+
+- name: configure color
+  command: git config --global color.ui true
+  when: (not 'git.config --global color.ui == true')

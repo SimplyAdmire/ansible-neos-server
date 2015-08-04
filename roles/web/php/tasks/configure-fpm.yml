@@ -1,0 +1,24 @@
+---
+
+- template: src=php-fpm.conf dest=/etc/php5/fpm/php-fpm.conf
+  sudo: yes
+  notify:
+    - restart php-fpm
+  tags:
+    - php
+
+- file: dest=/etc/php5/fpm/pool.d/www.conf state=absent
+  sudo: yes
+  notify:
+    - restart php-fpm
+  tags:
+    - php
+
+- template: src=pool.conf dest='/etc/php5/fpm/pool.d/{{ item.identifier }}.conf'
+  when: sites is defined
+  with_items: sites
+  sudo: yes
+  notify:
+    - restart php-fpm
+  tags:
+    - php

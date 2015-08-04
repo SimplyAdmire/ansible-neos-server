@@ -1,0 +1,44 @@
+---
+
+- apt: name=openjdk-7-jre state=present
+  sudo: yes
+  tags:
+    - elasticsearch
+
+- apt_key: url=https://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present
+  sudo: yes
+  tags:
+    - elasticsearch
+
+- apt_repository: repo='deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' state=present
+  sudo: yes
+  tags:
+    - elasticsearch
+
+- apt: name=elasticsearch state=present
+  sudo: yes
+  notify:
+    - start elasticsearch
+  tags:
+    - elasticsearch
+
+- name: Set elasticsearch configuration
+  lineinfile: 'dest=/etc/elasticsearch/elasticsearch.yml line="{{ item }}"'
+  with_items:
+    - 'script.groovy.sandbox.class_whitelist: java.util.LinkedHashMap'
+    - 'script.groovy.sandbox.receiver_whitelist:  java.util.Iterator, java.lang.Object, java.util.Map, java.util.Map$Entry'
+    - 'script.groovy.sandbox.enabled: true'
+    - 'cluster.name: devbox'
+    - 'network.host: 127.0.0.1'
+    - 'index.number_of_shards: 1'
+    - 'index.number_of_replicas: 0'
+  sudo: yes
+  notify:
+    - restart elasticsearch
+  tags:
+    - elasticsearch
+
+- service: name=elasticsearch state=started enabled=yes
+  sudo: yes
+  tags:
+    - elasticsearch

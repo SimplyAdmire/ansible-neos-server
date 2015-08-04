@@ -1,0 +1,32 @@
+---
+
+- name: Install nginx packages
+  apt: name='{{ item }}' state=present
+  sudo: yes
+  with_items:
+    - nginx
+    - apache2-utils
+  tags:
+    - nginx
+
+- name: Set www-data shell
+  user: name=www-data shell=/bin/bash
+  sudo: yes
+  tags:
+    - nginx
+
+- file: dest=/etc/nginx/sites-enabled/default state=absent
+  sudo: yes
+  notify:
+    - restart nginx
+  tags:
+    - nginx
+
+- template: src={{ item.vhost.template }} dest=/etc/nginx/sites-enabled/{{ item.identifier }}
+  sudo: yes
+  when: sites is defined
+  with_items: sites
+  notify:
+    - restart nginx
+  tags:
+    - nginx

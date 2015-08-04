@@ -1,0 +1,9 @@
+---
+
+- name: start php-fpm
+  command: service php5-fpm start
+  sudo: yes
+
+- name: restart php-fpm
+  command: service php5-fpm restart
+  sudo: yes

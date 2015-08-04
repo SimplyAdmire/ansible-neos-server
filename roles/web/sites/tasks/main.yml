@@ -1,0 +1,17 @@
+---
+
+- file: dest=/var/www/{{ item.identifier }}/Configuration/{{ item.vhost.context }} state=directory owner=www-data group=www-data
+  sudo: yes
+  with_items: sites
+  when: sites is defined
+  notify:
+    - restart nginx
+  tags:
+    - sites
+
+- template: src=Settings.yaml dest=/var/www/{{ item.identifier }}/Configuration/{{ item.vhost.context }}/Settings.yaml owner=www-data group=www-data
+  sudo: yes
+  with_items: sites
+  when: sites is defined
+  tags:
+    - sites

@@ -1,0 +1,34 @@
+---
+
+- include: install.yml
+
+- name: Create site databases
+  mysql_db:
+    name={{ item.1.name }}
+    state=present
+    collation=utf8_unicode_ci
+    encoding=utf8
+    login_host=127.0.0.1
+    login_unix_socket=/var/run/mysqld/mysqld.sock
+    login_user='{{ mysql_root_user }}'
+    login_password='{{ mysql_root_password }}'
+  when: item.1.type == 'mysql'
+  with_subelements:
+     - sites
+     - databases
+  tags:
+    - mysql
+
+- name: Set site database password
+  sudo: yes
+  mysql_user:
+    name={{ item.1.user }}
+    password={{ item.1.password }}
+    state=present
+    priv={{ item.1.name }}.*:ALL
+  when: item.1.type == 'mysql'
+  with_subelements:
+     - sites
+     - databases
+  tags:
+    - mysql

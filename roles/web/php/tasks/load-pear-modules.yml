@@ -1,0 +1,8 @@
+---
+
+- name: Create conf.d file for PEAR modules
+  lineinfile: line='extension={{ item }}.so' dest='{{ path }}/20-{{ item }}.ini' state=present create=yes
+  sudo: yes
+  with_items: php.pear
+  tags:
+    - php

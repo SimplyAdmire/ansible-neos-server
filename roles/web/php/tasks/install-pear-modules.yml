@@ -1,0 +1,13 @@
+---
+
+- name: Install PEAR modules
+  shell: echo "\n\n\n\n\n\n\n\n\n\n" | pecl install {{ item }}
+  register: pecl_result
+  changed_when: "'already installed' not in pecl_result.stdout"
+  failed_when: "pecl_result.stderr or ('ERROR' in pecl_result.stdout)"
+  sudo: yes
+  with_items: php.pear
+  notify:
+    - restart php-fpm
+  tags:
+    - php

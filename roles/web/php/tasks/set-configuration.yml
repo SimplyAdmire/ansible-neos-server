@@ -1,0 +1,6 @@
+---
+
+- template: src=99-php.ini dest='{{ path }}/99-php.ini'
+  sudo: yes
+  tags:
+    - php

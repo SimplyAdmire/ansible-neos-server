@@ -1,0 +1,35 @@
+---
+
+- name: Set timezone variables
+  lineinfile: dest=/etc/timezone
+    regexp=.*
+    line='{{ ntp.timezone }}'
+    owner=root
+    group=root
+    mode=0644
+  sudo: yes
+  notify:
+    - update timezone
+  tags:
+    - ntp
+
+- name: Install NTP
+  apt: package=ntp state=present update_cache=yes
+  sudo: yes
+  tags:
+    - ntp
+
+- name: Copy over the NTP configuration
+  template: src=ntp.conf dest=/etc/ntp.conf
+  sudo: yes
+  notify:
+    - restart ntp
+    - force ntp update
+  tags:
+    - ntp
+
+- name: Make sure NTP is started up
+  service: name=ntp state=started enabled=yes
+  sudo: yes
+  tags:
+    - ntp

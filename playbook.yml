@@ -1,0 +1,14 @@
+---
+
+- hosts: all
+  roles:
+    - common/ntp
+    - common/git
+    - common/packages
+    - database/mysql
+    - search/elasticsearch
+    - email/mailcatcher
+    - web/nginx
+    - web/php
+    - web/composer
+    - web/sites

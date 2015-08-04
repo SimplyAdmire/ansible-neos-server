@@ -1,0 +1,27 @@
+---
+
+- stat: path=/usr/local/bin/mailcatcher
+  register: mailcatcher_path
+  tags:
+    - mailcatcher
+
+- shell: gem install mailcatcher
+  when: (not mailcatcher_path.stat.exists)
+  tags:
+    - mailcatcher
+
+- shell: /usr/bin/env mailcatcher --http-ip=0.0.0.0 --no-quit
+  sudo: yes
+  ignore_errors: yes
+  tags:
+    - mailcatcher
+
+- template: src=mailcatcher.ini dest=/etc/php5/mods-available/mailcatcher.ini
+  sudo: yes
+  tags:
+    - mailcatcher
+
+- shell: php5enmod mailcatcher
+  sudo: yes
+  tags:
+    - mailcatcher

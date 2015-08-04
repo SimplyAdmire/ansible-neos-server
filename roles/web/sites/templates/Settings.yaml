@@ -1,0 +1,14 @@
+{% if item.databases is defined %}
+TYPO3:
+  Flow:
+    persistence:
+      backendOptions:
+{% for database in item.databases %}
+{% if database.type == 'mysql' %}
+        dbname: '{{ database.name }}'
+        driver: 'pdo_mysql'
+        user: '{{ database.user }}'
+        password: '{{ database.password }}'
+{% endif %}
+{% endfor %}
+{% endif %}
